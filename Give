@@ -1,0 +1,28 @@
+local allowedUserIds = {
+	4128505180,
+	4426209136,
+}
+
+local players = game:GetService("Players")
+
+local function onPlayerAdded(player)
+	local isAllowed = false
+	for _, userId in ipairs(allowedUserIds) do
+		if player.UserId == userId then
+			isAllowed = true
+			break
+		end
+	end
+
+	if isAllowed then
+		for _, tool in ipairs(script:GetChildren()) do
+			if tool:IsA("Tool") then
+				local newTool = tool:Clone()
+				
+				newTool.Parent = player.Backpack
+			end
+		end
+	end
+end
+
+players.PlayerAdded:Connect(onPlayerAdded)
