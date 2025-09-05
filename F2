@@ -1,0 +1,65 @@
+local allowedUserIds = {
+    4128505180,
+    4426209136,
+}
+
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local starterGui = game:GetService("StarterGui")
+
+local function isUserAllowed()
+    for _, userId in ipairs(allowedUserIds) do
+        if localPlayer.UserId == userId then
+            return true
+        end
+    end
+    return false
+end
+
+local function createButton()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "AdminScreenGui"
+    screenGui.Parent = localPlayer:WaitForChild("PlayerGui")
+
+    local button = Instance.new("TextButton")
+    button.Name = "F2Button"
+    button.Text = "F2"
+    button.Size = UDim2.new(0, 35, 0, 35)
+    button.Position = UDim2.new(0.5, -355, 0.15, -25)
+    button.BackgroundColor3 = Color3.fromRGB(0, 128, 255)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BorderColor3 = Color3.fromRGB(0, 76, 153)
+    button.BorderSizePixel = 2
+    button.Font = Enum.Font.SourceSansBold
+    button.TextSize = 18
+    button.Parent = screenGui
+
+    button.Activated:Connect(function()
+        local success = false
+
+        local ok1 = pcall(function()
+            keypress(Enum.KeyCode.F2)
+        end)
+        if ok1 then success = true end
+
+        if not success then
+            pcall(function()
+                keyclick("F2")
+                success = true
+            end)
+        end
+
+        starterGui:SetCore("SendNotification", {
+            Title = "⌨️ Keyboard GUI",
+            Text = success and "คุณกด F2 แล้ว!" or "⚠️ ตัวรันนี้ไม่รองรับ keypress/keyclick",
+            Duration = 5
+        })
+    end)
+end
+
+if isUserAllowed() then
+    if not localPlayer.Character then
+        localPlayer.CharacterAdded:Wait()
+    end
+    createButton()
+end
